@@ -1,0 +1,302 @@
+<header class="topbar" id="topbar">
+  <div class="wrap topbar-in">
+    <span class="topbar-mark" aria-hidden="true">
+      <svg viewBox="144 24 96 172">
+        <g id="swayMini" style="transform-box:fill-box;transform-origin:50% 100%">
+          <path d="M190 140 L190 65" stroke="currentColor" stroke-width="7" fill="none" opacity=".55"></path>
+          <path d="M190 102 Q148 80 154 28 Q197 39 190 102 Z" fill="#56633f"></path>
+          <path d="M190 118 Q230 102 236 62 Q197 67 190 118 Z" fill="#8fa073"></path>
+        </g>
+        <rect x="160" y="130" width="60" height="62" rx="20" fill="#3d472b"></rect>
+      </svg>
+    </span>
+    <span class="topbar-title" id="barTitle"></span>
+    <div class="topbar-tabs">
+      <button class="minitab" type="button" data-minitab="plantes" aria-label="Plantes">🪴<span>Plantes</span></button>
+      <button class="minitab" type="button" data-minitab="graines" aria-label="Graines et semis">🌱<span>Graines</span></button>
+    </div>
+    <button class="sync-pill" id="syncPill" type="button" data-setup-btn data-sync-step title="Synchronisation" hidden></button>
+    <button class="btn topbar-theme" type="button" data-setup-btn aria-label="Configurer la page" title="Configurer">⚙️</button>
+    <button class="btn topbar-theme" type="button" data-theme-btn aria-label="Changer de thème">🌙</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="ds-flag" id="dsFlag" hidden></div>
+  <div class="ds-flag is-tip" id="applyTip" hidden></div>
+  <div class="io-zone" id="conflictBar" hidden>
+    <span><strong>⚠️ Conflit de synchronisation.</strong> La version en ligne et celle de cet appareil ont changé toutes les deux. Choisis laquelle garder — l'autre sera perdue.</span>
+    <span class="io-actions">
+      <button class="btn is-on" type="button" id="cfKeepMine">Garder celle de cet appareil</button>
+      <button class="btn" type="button" id="cfTakeRemote">Prendre celle en ligne</button>
+    </span>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px">
+    <button class="btn" type="button" data-setup-btn title="Configurer cette page">⚙️ Configurer</button>
+    <button class="btn" type="button" data-theme-btn data-theme-long aria-live="polite">🌙 Mode sombre</button>
+  </div>
+
+  <!-- ════════ HERO ════════ -->
+  <div class="hero" id="hero" title="Cliquez pour agiter la plante">
+    <div class="hero-sun" aria-hidden="true"></div>
+    <div class="hero-hills" aria-hidden="true">
+      <svg viewBox="0 0 420 120" preserveAspectRatio="none">
+        <path d="M0 104 Q90 74 190 94 Q290 18 420 67 L420 120 L0 120 Z" fill="#d67f48"></path>
+      </svg>
+    </div>
+    <div class="hero-plant" aria-hidden="true">
+      <svg viewBox="144 24 96 172">
+        <g id="sway" style="transform-box:fill-box;transform-origin:50% 100%">
+          <path d="M190 140 L190 65" stroke="#272e1b" stroke-width="5" fill="none"></path>
+          <path class="leaf" d="M190 102 Q148 80 154 28 Q197 39 190 102 Z" fill="#56633f" style="transform-box:fill-box;transform-origin:100% 100%"></path>
+          <path class="leaf" d="M190 118 Q230 102 236 62 Q197 67 190 118 Z" fill="#8fa073" style="transform-box:fill-box;transform-origin:0% 100%"></path>
+          <path class="leaf" d="M190 123 Q160 108 152 78 Q184 84 190 123 Z" fill="#728157" style="transform-box:fill-box;transform-origin:100% 100%"></path>
+        </g>
+        <rect x="160" y="130" width="60" height="62" rx="20" fill="#3d472b"></rect>
+      </svg>
+    </div>
+    <div class="hero-copy">
+      <div class="hero-eyebrow" id="heroEyebrow"></div>
+      <h1 class="hero-title" id="heroTitle"></h1>
+      <p class="hero-sub" id="heroSub"></p>
+    </div>
+  </div>
+
+  <!-- ════════ ONGLETS ════════ -->
+  <div class="tabs" role="tablist" aria-label="Sections">
+    <div class="tabs-track">
+      <button class="tab" role="tab" id="tab-plantes" aria-controls="view-plantes" aria-selected="true" data-view="plantes">🪴 Plantes</button>
+      <button class="tab" role="tab" id="tab-graines" aria-controls="view-graines" aria-selected="false" data-view="graines">🌱 Graines &amp; semis</button>
+    </div>
+    <div class="tabs-overlay" id="tabsOverlay" aria-hidden="true">
+      <span class="tab">🪴 Plantes</span>
+      <span class="tab">🌱 Graines &amp; semis</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════
+       VUE 1 — PLANTES
+       ════════════════════════════════════════════════════════ -->
+  <section class="view is-active" id="view-plantes" role="tabpanel" aria-labelledby="tab-plantes">
+
+    <div class="card fold" id="legendFold" open-state="0">
+      <button class="fold-head" type="button" id="legendBtn" aria-expanded="false">
+        <span>Exposition de vos pièces</span>
+        <span class="fold-arrow">▼</span>
+      </button>
+      <div class="fold-body"><div>
+        <ul class="fold-inner" id="roomLegend"></ul>
+      </div></div>
+    </div>
+
+    <div class="bar-controls">
+      <input class="input" type="search" id="pSearch" placeholder="Rechercher une plante…" style="flex:1;min-width:240px" aria-label="Rechercher une plante">
+      <select class="input" id="pSort" aria-label="Trier les plantes">
+        <option value="alpha">A → Z</option>
+        <option value="light">Ensoleillement</option>
+        <option value="humid">Humidité</option>
+      </select>
+      <button class="btn btn-icon" id="pDir" type="button" title="Inverser l'ordre" aria-label="Inverser l'ordre">⬇️</button>
+    </div>
+    <div class="filters" id="pRooms"></div>
+    <p class="count" id="pCount"></p>
+    <div class="grid" id="pGrid"></div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:16px;margin-top:38px" id="pGroups"></div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════
+       VUE 2 — GRAINES
+       ════════════════════════════════════════════════════════ -->
+  <section class="view" id="view-graines" role="tabpanel" aria-labelledby="tab-graines" hidden>
+
+    <div class="card now" id="nowCard"></div>
+    <div id="oldTip"></div>
+
+    <h2 style="font-size:21px;margin:26px 0 4px">Calendrier des semis</h2>
+    <p style="font-size:13px;color:var(--text-dim);margin-bottom:12px" id="climateLine"></p>
+    <div class="legend">
+      <span><i style="background:var(--c-int)"></i>Semis sous abri / intérieur</span>
+      <span><i style="background:var(--c-ext)"></i>Semis en place / extérieur</span>
+      <span><i style="background:var(--c-plant)"></i>Repiquage / plantation</span>
+      <span><i style="background:var(--c-harv)"></i>Floraison / récolte</span>
+    </div>
+    <div class="cal-wrap"><div class="cal" id="calTable"></div></div>
+
+    <h2 style="font-size:21px;margin:30px 0 12px">Fiches par graine</h2>
+    <div class="bar-controls">
+      <input class="input" type="search" id="sSearch" placeholder="Rechercher une graine…" style="flex:1;min-width:240px" aria-label="Rechercher une graine">
+      <select class="input" id="sSort" aria-label="Trier les graines">
+        <option value="alpha">A → Z</option>
+        <option value="month">Mois de semis</option>
+        <option value="fresh">Fraîcheur</option>
+      </select>
+      <button class="btn btn-icon" id="sDir" type="button" title="Inverser l'ordre" aria-label="Inverser l'ordre">⬇️</button>
+      <span class="io-sep" aria-hidden="true"></span>
+      <button class="btn" id="ioExport" type="button" title="Télécharger tes cases cochées et tes notes dans un fichier .json">💾 Mes notes</button>
+      <button class="btn" id="ioImport" type="button" title="Recharger une sauvegarde de tes coches et notes">📂 Restaurer</button>
+      <input type="file" id="ioFile" accept="application/json,.json" hidden>
+    </div>
+
+    <div class="io-zone" id="ioZone" hidden></div>
+    <p class="io-status" id="ioStatus" role="status" aria-live="polite"></p>
+
+    <div class="filters" id="sFilters"></div>
+    <p class="count" id="sCount"></p>
+    <div class="grid" id="sGrid"></div>
+  </section>
+
+  <footer>
+    <span id="footTitle"></span> — fichier autonome, fonctionne hors ligne. Cases cochées et notes enregistrées dans ce navigateur uniquement.
+    <br><span id="stamp"></span>
+  </footer>
+</div>
+
+<div class="modal" id="setup" hidden>
+  <div class="modal-back" data-setup-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="setupTitle">
+    <header class="modal-head">
+      <h2 id="setupTitle">Configurer la page</h2>
+      <button class="btn btn-icon" type="button" data-setup-close aria-label="Fermer">✕</button>
+    </header>
+
+    <nav class="steps" id="setupSteps">
+      <button class="step is-on" type="button" data-step="1"><b>1</b> Identité</button>
+      <button class="step" type="button" data-step="2"><b>2</b> Pièces</button>
+      <button class="step" type="button" data-step="3"><b>3</b> Générer</button>
+      <button class="step" type="button" data-step="4"><b>4</b> Synchro</button>
+    </nav>
+
+    <div class="modal-body">
+      <section class="pane is-on" data-pane="1">
+        <label class="fld"><span>Nom de la page</span>
+          <input class="input" id="fTitle" type="text" placeholder="Your Tiny Jungle" maxlength="40"></label>
+        <label class="fld"><span>Ville</span>
+          <input class="input" id="fCity" type="text" placeholder="Lyon, Bruxelles, Montréal…" maxlength="60"></label>
+        <label class="fld"><span>Sous-titre</span>
+          <input class="input" id="fSub" type="text" placeholder="Où poser chaque plante, et quoi semer quand." maxlength="120"></label>
+        <p class="hint">La ville sert à caler le calendrier des semis sur les dates de gelées locales. Elle est reprise dans le prompt de l'étape 3.<br><br>Cet assistant se rouvrira à chaque ouverture tant que tu n'auras pas cliqué sur <strong>Appliquer</strong> ou importé des données.</p>
+      </section>
+
+      <section class="pane" data-pane="2">
+        <p class="hint">Un emoji par pièce : c'est la clé qui relie une plante à ses emplacements. Si tu changes l'emoji d'une pièce existante, les plantes qui le référencent perdent le lien.</p>
+        <div id="roomRows"></div>
+        <button class="btn" type="button" id="addRoom">＋ Ajouter une pièce</button>
+        <p class="warn" id="roomWarn" hidden></p>
+      </section>
+
+      <section class="pane" data-pane="3">
+        <p class="hint">Copie ce texte dans Claude, ChatGPT ou l'IA de ton choix, avec ta liste de plantes et de graines. Elle te renverra un fichier <code>.json</code> que tu recharges ici avec « Importer des données ».</p>
+        <textarea class="prompt-box" id="promptBox" readonly rows="14" spellcheck="false"></textarea>
+        <div class="modal-actions">
+          <button class="btn is-on" type="button" id="copyPrompt">📋 Copier le prompt</button>
+          <button class="btn" type="button" id="dsExport">⬇️ Exporter les données</button>
+          <button class="btn" type="button" id="dsImport">⬆️ Importer des données</button>
+          <button class="btn" type="button" id="dsReset">↺ Revenir aux données d'origine</button>
+          <input type="file" id="dsFile" accept="application/json,.json" hidden>
+        </div>
+        <p class="io-status" id="dsStatus" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="pane" data-pane="4">
+        <p class="hint"><strong>À quoi ça sert :</strong> retrouver tes plantes, tes coches et tes notes sur ton téléphone comme sur ton PC. Tes données partent <strong>chiffrées</strong> dans un dépôt GitHub privé — ni GitHub ni personne d'autre ne peut les lire sans ta phrase secrète.</p>
+
+        <ol class="guide">
+          <li><strong>Créer un jeton.</strong> GitHub → Settings → Developer settings → Personal access tokens → <em>Fine-grained</em>. <em>Only select repositories</em> → ton dépôt privé. Permissions → <strong>Contents : Read and write</strong>. Durée : 1 an.</li>
+          <li><strong>Le coller ci-dessous</strong>, avec le nom du compte et du dépôt privé.</li>
+          <li><strong>Choisir une phrase secrète</strong> longue. Elle ne part jamais chez GitHub. Si tu la perds, les données sont irrécupérables.</li>
+        </ol>
+
+        <div class="sy-grid">
+          <label class="fld"><span>Compte GitHub</span><input class="input" id="sy_owner" type="text" placeholder="moncompte" autocomplete="off" spellcheck="false"></label>
+          <label class="fld"><span>Dépôt privé</span><input class="input" id="sy_repo" type="text" placeholder="mon-depot-prive" autocomplete="off" spellcheck="false"></label>
+          <label class="fld"><span>Fichier</span><input class="input" id="sy_path" type="text" placeholder="jungle/datas.json" autocomplete="off" spellcheck="false"></label>
+          <label class="fld"><span>Branche</span><input class="input" id="sy_branch" type="text" placeholder="main" autocomplete="off" spellcheck="false"></label>
+        </div>
+        <label class="fld"><span>Jeton GitHub</span><input class="input" id="sy_token" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false"></label>
+        <label class="fld"><span>Phrase secrète</span><input class="input" id="sy_pass" type="password" placeholder="une phrase longue, à toi" autocomplete="off" spellcheck="false"></label>
+        <label class="sown" style="margin-bottom:12px"><input type="checkbox" id="sy_show"><span class="box" aria-hidden="true"></span><span>Afficher le jeton et la phrase</span></label>
+
+        <p class="hint" id="syncWhere"></p>
+        <div class="modal-actions">
+          <button class="btn is-on" type="button" id="syncNow">⟳ Synchroniser maintenant</button>
+          <button class="btn" type="button" id="shareOpen">📱 Partager vers un autre appareil</button>
+          <button class="btn" type="button" id="syncWipe">🗑️ Vider cet appareil</button>
+        </div>
+        <p class="io-status" id="syncStatus" role="status" aria-live="polite"></p>
+
+        <p class="warn" style="margin-top:14px">Le jeton et la phrase secrète restent dans le stockage de ce navigateur. Sur un appareil partagé, utilise « Vider cet appareil » en partant.</p>
+      </section>
+    </div>
+
+    <footer class="modal-foot">
+      <p class="foot-hint">
+        <strong>Appliquer</strong> ne change que cette page, sur ce navigateur.
+        <strong>Enregistrer</strong> fabrique un fichier <code>.html</code> à emporter, données comprises —
+        une page web n'a pas le droit de réécrire son propre fichier, c'est le seul moyen.
+        <span id="setupCount"></span>
+      </p>
+      <div class="foot-btns">
+        <button class="btn" type="button" data-setup-close>Fermer</button>
+        <button class="btn" type="button" id="pageDl">💾 Enregistrer un fichier .html</button>
+        <button class="btn is-on" type="button" id="applySetup">✓ Appliquer sur ce navigateur</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+
+<div class="modal" id="shareModal" hidden>
+  <div class="modal-back" data-share-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="shareTitle" style="width:min(520px,100%)">
+    <header class="modal-head">
+      <h2 id="shareTitle">Partager la synchronisation</h2>
+      <button class="btn btn-icon" type="button" data-share-close aria-label="Fermer">✕</button>
+    </header>
+    <div class="modal-body">
+      <p class="hint">Scanne ce QR depuis l'autre appareil. Il contient <strong>ton jeton GitHub et ta phrase secrète</strong> — d'où le code de protection, à donner de vive voix et jamais avec le QR.</p>
+      <div class="qr-wrap"><div id="qrBox"></div></div>
+      <div class="qr-code-row">
+        <span class="label">Code de protection</span>
+        <strong id="qrCodeShow">—</strong>
+      </div>
+      <label class="sown" style="margin:10px 0"><input type="checkbox" id="qrProtect" checked><span class="box" aria-hidden="true"></span><span>Protéger par un code (recommandé)</span></label>
+      <div class="bar-controls">
+        <input class="input" id="qrCode" type="text" maxlength="24" spellcheck="false" autocomplete="off" aria-label="Code de protection" style="flex:1;min-width:150px;font-family:ui-monospace,monospace;letter-spacing:.12em">
+        <button class="btn" type="button" id="qrNew" title="Tirer un nouveau code">🎲</button>
+      </div>
+      <p class="warn" id="qrWarn" hidden></p>
+      <input class="input" id="qrLink" type="text" readonly spellcheck="false" style="width:100%;font-size:11px;margin-top:10px" aria-label="Lien de partage">
+      <p class="hint" id="qrLen" style="margin-top:6px"></p>
+      <div class="modal-actions"><button class="btn is-on" type="button" id="qrCopy">📋 Copier le lien</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="importModal" hidden>
+  <div class="modal-back" data-import-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="impTitle" style="width:min(440px,100%)">
+    <header class="modal-head">
+      <h2 id="impTitle">Importer la synchronisation</h2>
+      <button class="btn btn-icon" type="button" data-import-close aria-label="Fermer">✕</button>
+    </header>
+    <div class="modal-body">
+      <p class="hint" id="impMsg"></p>
+      <div id="impCodeRow" hidden>
+        <label class="fld"><span>Code de protection</span>
+          <input class="input" id="impCode" type="text" maxlength="24" spellcheck="false" autocomplete="off" placeholder="XXXX-XXXX" style="font-family:ui-monospace,monospace;letter-spacing:.12em"></label>
+      </div>
+      <p class="hint">Cette configuration remplacera celle de cet appareil, puis les données seront récupérées depuis GitHub.</p>
+    </div>
+    <footer class="modal-foot">
+      <div class="foot-btns">
+        <button class="btn" type="button" data-import-close>Annuler</button>
+        <button class="btn is-on" type="button" id="impGo">Importer</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<button class="totop" id="toTop" type="button" aria-label="Remonter en haut de la page" title="Remonter en haut">↑</button>

@@ -1,0 +1,775 @@
+<script type="application/json" id="jungle-data">
+{
+ "app": "your-tiny-jungle",
+ "schema": 1,
+ "configured": false,
+ "site": {
+  "title": "Your Tiny Jungle",
+  "city": "",
+  "subtitle": "Où poser chaque plante, et quoi semer quand.",
+  "eyebrow": "Plantes d'intérieur & graines",
+  "climate": "⚠️ Jeu de données d'exemple. Les mois indiqués valent pour un climat tempéré français moyen. Ouvre ⚙️ Configurer pour saisir ta ville : le calendrier doit être recalé sur ses dates de gelées."
+ },
+ "rooms": [
+  {
+   "icon": "🛋️",
+   "name": "Salon",
+   "orientation": "Sud",
+   "details": "Grande fenêtre, lumière abondante une bonne partie de la journée"
+  },
+  {
+   "icon": "🍽️",
+   "name": "Salle à manger",
+   "orientation": "Sud-Ouest",
+   "details": "Lumière forte en fin de journée"
+  },
+  {
+   "icon": "🍳",
+   "name": "Cuisine",
+   "orientation": "Est",
+   "details": "Soleil du matin, doux"
+  },
+  {
+   "icon": "🛌",
+   "name": "Chambre",
+   "orientation": "Est",
+   "details": "Soleil du matin, doux"
+  },
+  {
+   "icon": "💻",
+   "name": "Bureau",
+   "orientation": "Nord",
+   "details": "Lumière douce et stable toute la journée"
+  },
+  {
+   "icon": "🛁",
+   "name": "Salle de bain",
+   "orientation": "Nord",
+   "details": "Lumière faible, humidité élevée"
+  },
+  {
+   "icon": "🚪",
+   "name": "Entrée",
+   "orientation": "Sans lumière",
+   "details": "Aucune fenêtre"
+  }
+ ],
+ "plants": [
+  {
+   "name": "Monstera",
+   "latin": "Monstera deliciosa",
+   "wikiPage": "Monstera deliciosa",
+   "wikiLang": "fr",
+   "rooms": [
+    "🛋️",
+    "🍽️"
+   ],
+   "placement": "🛋️🍽️ éloigné des fenêtres",
+   "light": "med",
+   "humidity": "med",
+   "size": "Très grande (2-3 m)",
+   "notes": "Demande beaucoup d'espace. Les découpes des feuilles apparaissent avec la maturité."
+  },
+  {
+   "name": "Pothos doré",
+   "latin": "Epipremnum aureum",
+   "wikiPage": "Epipremnum aureum",
+   "wikiLang": "fr",
+   "rooms": [
+    "🍳",
+    "🛌",
+    "💻",
+    "🛁"
+   ],
+   "placement": "🍳🛌 ou 💻 ou 🛁",
+   "light": "low",
+   "humidity": "med",
+   "size": "Retombante ou grimpante",
+   "notes": "La plus tolérante : survit à presque tout, y compris à l'oubli d'arrosage."
+  },
+  {
+   "name": "Sansevière",
+   "latin": "Dracaena trifasciata",
+   "wikiPage": "Sansevieria trifasciata",
+   "wikiLang": "fr",
+   "rooms": [
+    "💻",
+    "🚪",
+    "🛋️",
+    "🍳"
+   ],
+   "placement": "💻 ou presque toute pièce",
+   "light": "low",
+   "humidity": "low",
+   "size": "Moyenne (40-100 cm)",
+   "notes": "Quasi increvable. Arrosage très rare, surtout l'hiver."
+  },
+  {
+   "name": "Ficus elastica",
+   "latin": "Ficus elastica",
+   "wikiPage": "Ficus elastica",
+   "wikiLang": "fr",
+   "rooms": [
+    "🛋️",
+    "🍽️",
+    "🍳"
+   ],
+   "placement": "🛋️🍽️ éloigné ou 🍳",
+   "light": "med",
+   "humidity": "med",
+   "size": "Grande (1,5-2 m+)",
+   "notes": "Essuyer les feuilles de temps en temps : la poussière réduit la photosynthèse."
+  },
+  {
+   "name": "Fleur de lune",
+   "latin": "Spathiphyllum wallisii",
+   "wikiPage": "Spathiphyllum wallisii",
+   "wikiLang": "fr",
+   "rooms": [
+    "🛋️",
+    "💻",
+    "🛁"
+   ],
+   "placement": "🛋️ éloigné ou 💻 ou 🛁",
+   "light": "low",
+   "humidity": "high",
+   "size": "Moyenne (40-80 cm)",
+   "notes": "Signale son besoin d'eau en laissant tomber ses feuilles, et repart en quelques heures."
+  },
+  {
+   "name": "Aloe vera",
+   "latin": "Aloe vera",
+   "wikiPage": "Aloe_vera",
+   "wikiLang": "fr",
+   "rooms": [
+    "🍳",
+    "🛋️",
+    "🍽️"
+   ],
+   "placement": "🍳 bord de fenêtre ou 🛋️🍽️ proche fenêtre",
+   "light": "high",
+   "humidity": "low",
+   "size": "Petite (30-50 cm)",
+   "notes": "Terreau très drainant. Laisser sécher complètement entre deux arrosages."
+  },
+  {
+   "name": "Plante araignée",
+   "latin": "Chlorophytum comosum",
+   "wikiPage": "Chlorophytum comosum",
+   "wikiLang": "fr",
+   "rooms": [
+    "💻",
+    "🍳",
+    "🛌",
+    "🛁"
+   ],
+   "placement": "💻 ou 🍳🛌 ou 🛁",
+   "light": "low",
+   "humidity": "med",
+   "size": "Petite retombante",
+   "notes": "Produit des stolons avec des bébés plantes, faciles à bouturer dans l'eau."
+  },
+  {
+   "name": "Pilea",
+   "latin": "Pilea peperomioides",
+   "wikiPage": "Pilea peperomioides",
+   "wikiLang": "fr",
+   "rooms": [
+    "🍳",
+    "🛌",
+    "🛋️"
+   ],
+   "placement": "🍳🛌 ou 🛋️ éloigné",
+   "light": "med",
+   "humidity": "med",
+   "size": "Petite (30-40 cm)",
+   "notes": "La tourner d'un quart de tour chaque semaine pour qu'elle pousse droit."
+  },
+  {
+   "name": "Calathea",
+   "latin": "Calathea makoyana",
+   "wikiPage": "Calathea makoyana",
+   "wikiLang": "fr",
+   "rooms": [
+    "🛋️",
+    "💻",
+    "🛁"
+   ],
+   "placement": "🛋️ éloigné ou 💻 ou 🛁",
+   "light": "med",
+   "humidity": "high",
+   "size": "Moyenne (40-60 cm)",
+   "notes": "Jamais de soleil direct. Exigeante en humidité : la grouper avec d'autres tropicales."
+  },
+  {
+   "name": "Philodendron grimpant",
+   "latin": "Philodendron hederaceum",
+   "wikiPage": "Philodendron hederaceum",
+   "wikiLang": "fr",
+   "rooms": [
+    "🍳",
+    "🛌",
+    "💻",
+    "🛁"
+   ],
+   "placement": "🍳🛌 ou 💻 ou 🛁",
+   "light": "med",
+   "humidity": "med",
+   "size": "Retombante ou grimpante",
+   "notes": "Très tolérant. Profite de l'humidité de la salle de bain."
+  }
+ ],
+ "seeds": [
+  {
+   "id": "radis",
+   "name": "Radis",
+   "latin": "Raphanus sativus",
+   "wikiPage": "Radis",
+   "fresh": true,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [
+     2
+    ],
+    "outdoor": [
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ],
+    "transplant": [],
+    "harvest": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "facts": {
+    "Profondeur": "1 cm maximum",
+    "Espacement": "Rangs de 15 cm",
+    "Récolte": "4 à 6 semaines après semis",
+    "Conservation": "4 à 5 ans"
+   },
+   "notes": "Échelonner tous les 15-20 jours. Arroser régulièrement, sinon les radis deviennent creux et piquants.",
+   "sources": [
+    [
+     "jardiner-malin",
+     "https://www.jardiner-malin.fr/fiche/radis.html"
+    ]
+   ]
+  },
+  {
+   "id": "basilic",
+   "name": "Basilic",
+   "latin": "Ocimum basilicum",
+   "wikiPage": "Basilic",
+   "fresh": true,
+   "type": "Annuelle frileuse",
+   "calendar": {
+    "indoor": [
+     3,
+     4
+    ],
+    "outdoor": [
+     5,
+     6
+    ],
+    "transplant": [
+     5
+    ],
+    "harvest": [
+     6,
+     7,
+     8,
+     9
+    ]
+   },
+   "facts": {
+    "Température": "18-20 °C",
+    "Espacement": "20-30 cm",
+    "Germination": "≈ 10 jours",
+    "Seuil de froid": "Souffre sous 10 °C"
+   },
+   "notes": "Ne le sortir qu'après les dernières gelées, avec des nuits à 15 °C minimum. Pincer les têtes et couper les fleurs.",
+   "sources": [
+    [
+     "jardiner-malin",
+     "https://www.jardiner-malin.fr/fiche/basilic.html"
+    ]
+   ]
+  },
+  {
+   "id": "persil",
+   "name": "Persil",
+   "latin": "Petroselinum crispum",
+   "wikiPage": "Persil",
+   "fresh": true,
+   "type": "Bisannuelle",
+   "calendar": {
+    "indoor": [
+     2,
+     3
+    ],
+    "outdoor": [
+     3,
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "transplant": [],
+    "harvest": [
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "facts": {
+    "Profondeur": "2 cm",
+    "Espacement": "Éclaircir à 10 cm",
+    "Germination": "3 à 4 semaines",
+    "Conservation": "2 ans"
+   },
+   "notes": "Tremper les graines 24 h avant de semer : la levée est lente. Récolte possible tout l'hiver sous cloche.",
+   "sources": [
+    [
+     "Ernest Turc",
+     "https://www.ernest-turc.com/boutique/produits/graines/aromatiques/persils/persil-commun-2/"
+    ]
+   ]
+  },
+  {
+   "id": "coriandre",
+   "name": "Coriandre",
+   "latin": "Coriandrum sativum",
+   "wikiPage": "Coriandre",
+   "fresh": true,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [
+     2,
+     3
+    ],
+    "outdoor": [
+     4,
+     5,
+     6,
+     7
+    ],
+    "transplant": [],
+    "harvest": [
+     5,
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "facts": {
+    "Profondeur": "1-2 cm",
+    "Espacement": "20 cm",
+    "Germination": "Jusqu'à 2 semaines",
+    "Maturité": "≈ 2 mois"
+   },
+   "notes": "Semis direct : elle n'aime pas être déplacée. Monte vite en graine par temps chaud, à échelonner.",
+   "sources": [
+    [
+     "jardiner-malin",
+     "https://www.jardiner-malin.fr/fiche/coriandre.html"
+    ]
+   ]
+  },
+  {
+   "id": "bourrache",
+   "name": "Bourrache",
+   "latin": "Borago officinalis",
+   "wikiPage": "Bourrache officinale",
+   "fresh": true,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [],
+    "outdoor": [
+     4,
+     5,
+     6,
+     7
+    ],
+    "transplant": [],
+    "harvest": [
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "facts": {
+    "Semis": "Directement en place",
+    "Espacement": "30-40 cm",
+    "Période": "Avril à juillet",
+    "Récolte": "Juillet à octobre"
+   },
+   "notes": "Déteste le repiquage. Se ressème naturellement d'année en année. Fleurs comestibles, aimant à pollinisateurs.",
+   "sources": [
+    [
+     "jardiner-malin",
+     "https://www.jardiner-malin.fr/fiche/bourrache.html"
+    ]
+   ]
+  },
+  {
+   "id": "courgette",
+   "name": "Courgette",
+   "latin": "Cucurbita pepo",
+   "wikiPage": "Courgette",
+   "fresh": true,
+   "type": "Annuelle gélive",
+   "calendar": {
+    "indoor": [
+     3,
+     4
+    ],
+    "outdoor": [
+     5,
+     6
+    ],
+    "transplant": [
+     5,
+     6
+    ],
+    "harvest": [
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "facts": {
+    "Espacement": "80 cm à 1 m",
+    "Semis intérieur": "Mars-avril",
+    "Pleine terre": "Après les gelées",
+    "Conservation": "6 à 8 ans"
+   },
+   "notes": "Semer 3 graines par poquet et garder la plus vigoureuse. Une seule plante suffit à nourrir une famille.",
+   "sources": [
+    [
+     "jardiner-malin",
+     "https://www.jardiner-malin.fr/fiche/calendrier-semis-recolte-potager.html"
+    ]
+   ]
+  },
+  {
+   "id": "tournesol",
+   "name": "Tournesol",
+   "latin": "Helianthus annuus",
+   "wikiPage": "Helianthus annuus",
+   "fresh": true,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [],
+    "outdoor": [
+     4,
+     5,
+     6
+    ],
+    "transplant": [],
+    "harvest": [
+     7,
+     8,
+     9
+    ]
+   },
+   "facts": {
+    "Profondeur": "2-3 cm",
+    "Espacement": "20-30 cm",
+    "Sol": "10-12 °C minimum",
+    "Hauteur": "Jusqu'à 3-4 m"
+   },
+   "notes": "Floraison 60 à 90 jours après le semis. Tuteurer les variétés géantes. Protéger les jeunes pousses des limaces.",
+   "sources": [
+    [
+     "jardiner-malin",
+     "https://www.jardiner-malin.fr/fiche/tournesol.html"
+    ]
+   ]
+  },
+  {
+   "id": "capucine",
+   "name": "Capucine",
+   "latin": "Tropaeolum majus",
+   "wikiPage": "Tropaeolum majus",
+   "fresh": true,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [
+     2,
+     3,
+     4
+    ],
+    "outdoor": [
+     5
+    ],
+    "transplant": [],
+    "harvest": [
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "facts": {
+    "Profondeur": "3 cm",
+    "Espacement": "30 cm (naine) / 50 cm (grimpante)",
+    "Germination": "12-15 jours",
+    "Floraison": "2-3 mois après semis"
+   },
+   "notes": "Tremper les graines dans l'eau tiède la veille. Attire les pucerons loin des autres cultures.",
+   "sources": [
+    [
+     "Promesse de Fleurs",
+     "https://www.promessedefleurs.com/conseil-plantes-jardin/tutoriel/comment-semer-des-capucines/"
+    ]
+   ]
+  },
+  {
+   "id": "zinnia",
+   "name": "Zinnia",
+   "latin": "Zinnia elegans",
+   "wikiPage": "Zinnia elegans",
+   "fresh": true,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [
+     3,
+     4
+    ],
+    "outdoor": [
+     5
+    ],
+    "transplant": [
+     5
+    ],
+    "harvest": [
+     6,
+     7,
+     8,
+     9,
+     10
+    ]
+   },
+   "facts": {
+    "Profondeur": "3 mm",
+    "Espacement": "30 cm",
+    "Germination": "7-14 jours à 15-25 °C",
+    "Hauteur": "15 cm à 1 m"
+   },
+   "notes": "Plantation définitive quand il fait plus de 18 °C. Semis échelonnés = floraison jusqu'aux premières gelées.",
+   "sources": [
+    [
+     "Promesse de Fleurs",
+     "https://www.promessedefleurs.com/conseil-plantes-jardin/fichefamille/zinnia-semis-plantation-entretien/"
+    ]
+   ]
+  },
+  {
+   "id": "calendula",
+   "name": "Souci (calendula)",
+   "latin": "Calendula officinalis",
+   "wikiPage": "Souci officinal",
+   "fresh": false,
+   "type": "Annuelle",
+   "calendar": {
+    "indoor": [],
+    "outdoor": [
+     3,
+     4,
+     5,
+     9
+    ],
+    "transplant": [],
+    "harvest": [
+     6,
+     7,
+     8,
+     9
+    ]
+   },
+   "facts": {
+    "Profondeur": "1-2 mm",
+    "Espacement": "30 cm",
+    "Germination": "8 jours",
+    "Hauteur": "45 cm"
+   },
+   "notes": "Une des plus faciles. Pétales comestibles, se ressème seule. Exemple de lot ancien dans ce jeu de démonstration.",
+   "sources": [
+    [
+     "Promesse de Fleurs",
+     "https://www.promessedefleurs.com/annuelles/graines-de-fleurs/graines-de-fleurs-par-variete/graines-de-calendulas/calendula-officinalis.html"
+    ]
+   ]
+  }
+ ],
+ "plantGroups": [
+  {
+   "title": "🛋️🍽️ Plein sud — éloignées des fenêtres",
+   "plants": [
+    "Monstera",
+    "Ficus elastica",
+    "Fleur de lune",
+    "Calathea"
+   ]
+  },
+  {
+   "title": "🛋️🍳 Plein sud — tout près de la vitre",
+   "plants": [
+    "Aloe vera"
+   ]
+  },
+  {
+   "title": "🍳🛌 Est — soleil du matin",
+   "plants": [
+    "Pothos doré",
+    "Pilea",
+    "Plante araignée",
+    "Philodendron grimpant"
+   ]
+  },
+  {
+   "title": "💻 Nord — lumière douce",
+   "plants": [
+    "Pothos doré",
+    "Fleur de lune",
+    "Calathea",
+    "Sansevière"
+   ]
+  },
+  {
+   "title": "🛁 Salle de bain — humide et peu éclairée",
+   "plants": [
+    "Pothos doré",
+    "Philodendron grimpant",
+    "Calathea",
+    "Plante araignée"
+   ]
+  },
+  {
+   "title": "🚪 Entrée sans lumière",
+   "plants": [
+    "Sansevière"
+   ],
+   "suffix": " (courte durée, rotation conseillée)"
+  }
+ ],
+ "humidityGroups": [
+  {
+   "title": "Coin tropical (humidité élevée — à grouper)",
+   "plants": [
+    "Calathea",
+    "Fleur de lune"
+   ]
+  },
+  {
+   "title": "Coin sec (arrosage rare — à grouper aussi)",
+   "plants": [
+    "Aloe vera",
+    "Sansevière"
+   ]
+  }
+ ]
+}
+</script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   YOUR TINY JUNGLE — v4
+   Le HTML au-dessus n'est que la structure. TOUT le contenu vit
+   dans le bloc JSON #jungle-data ci-dessus : remplace-le et tu as
+   une autre maison, sans toucher une ligne de code.
+   Un jeu de données importé (localStorage) prend le pas dessus.
+   Principes d'animation : github.com/emilkowalski/skills
+   ════════════════════════════════════════════════════════════════ */
+"use strict";
+
+const EASE_OUT = "cubic-bezier(0.23, 1, 0.32, 1)";
+const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* Les clés localStorage gardent leur nom d'origine : les renommer
+   effacerait les coches et notes déjà enregistrées sur ce poste. */
+const DATA_KEY = "maxiskaJungle.dataset";
+/* Ancien identifiant de format, encore accepté à l'import. */
+const APP_ID = "your-tiny-jungle", APP_ID_LEGACY = "maxiska-jungle";
+const isOurs = d => d && (d.app === APP_ID || d.app === APP_ID_LEGACY);
+const EMBEDDED = JSON.parse(document.getElementById("jungle-data").textContent);
+
+function readDataset(){
+  try {
+    const raw = localStorage.getItem(DATA_KEY);
+    if (raw){
+      const d = JSON.parse(raw);
+      if (isOurs(d) && Array.isArray(d.plants)) return d;
+    }
+  } catch(e){ /* jeu de données importé illisible : on retombe sur l'embarqué */ }
+  return EMBEDDED;
+}
+const DATA = readDataset();
+const IS_IMPORTED = DATA !== EMBEDDED;
+
+/* « Configuré » = soit le jeu de données le déclare (page générée
+   par le bouton « Télécharger cette page »), soit l'utilisateur a
+   déjà appliqué une configuration ou importé des données sur ce
+   navigateur. Tant que c'est faux, la page affiche le bandeau
+   « données d'exemple » et ouvre l'assistant au chargement. */
+const CONFIG_KEY = "maxiskaJungle.configured";
+function readFlag(){ try { return localStorage.getItem(CONFIG_KEY) === "1"; } catch(e){ return false; } }
+function setFlag(v){ try { v ? localStorage.setItem(CONFIG_KEY,"1") : localStorage.removeItem(CONFIG_KEY); } catch(e){} }
+const IS_CONFIGURED = DATA.configured === true || readFlag();
+
+/* ── Adaptation vers les formes internes ─────────────────────
+   Le JSON est verbeux et lisible (une IA doit pouvoir l'écrire) ;
+   le rendu travaille sur des clés courtes. La conversion est ici,
+   et nulle part ailleurs. */
+const SITE = Object.assign(
+  { title:"Your Tiny Jungle", city:"", subtitle:"", eyebrow:"Plantes d'intérieur & graines", climate:"" },
+  DATA.site || {});
+
+const PLANTS = (DATA.plants||[]).map(p => ({
+  n:p.name, l:p.latin, p:p.wikiPage||p.latin, lg:p.wikiLang||"fr",
+  r:p.rooms||[], rt:p.placement||"", li:p.light||"med", hu:p.humidity||"med",
+  sz:p.size||"", no:p.notes||""
+}));
+
+const ROOM_LIST = DATA.rooms || [];
+const ROOMS = [{k:"all",lb:"Toutes"}].concat(ROOM_LIST.map(r => ({ k:r.icon, lb:r.icon + " " + r.name })));
+const ROOM_META = Object.fromEntries(ROOM_LIST.map(r => [r.icon, { n:r.name, o:r.orientation, d:r.details }]));
+
+const GROUPS = (DATA.plantGroups||[]).map(g => ({ t:g.title, p:g.plants||[], suffix:g.suffix }));
+const HUMID_GROUPS = (DATA.humidityGroups||[]).map(g => ({ t:g.title, p:g.plants||[] }));
+
+const SEEDS = (DATA.seeds||[]).map(s => ({
+  id:s.id, n:s.name, l:s.latin, w:s.wikiPage||s.latin, fresh:s.fresh?1:0, ty:s.type||"",
+  cal:{ i:(s.calendar||{}).indoor||[], e:(s.calendar||{}).outdoor||[],
+        p:(s.calendar||{}).transplant||[], h:(s.calendar||{}).harvest||[] },
+  f:s.facts||{}, no:s.notes||"", src:s.sources||[]
+}));
+
+const LIGHT = {high:"☀️ Vive/directe",med:"🌤️ Moyenne/vive",low:"🌥️ Faible/ombre"};
+const HUMID = {high:"💧 Élevée",med:"💧 Moyenne",low:"💧 Faible"};
+const ORDER = {high:0,med:1,low:2};
+const MONTHS = ["Jan","Fév","Mar","Avr","Mai","Juin","Juil","Août","Sep","Oct","Nov","Déc"];
+const MONTHS_SHORT = ["J","F","M","A","M","J","J","A","S","O","N","D"];
+const MONTHS_FULL = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const ORIENTATIONS = ["Sud","Sud-Est","Sud-Ouest","Est","Ouest","Nord","Nord-Est","Nord-Ouest","Sans lumière"];
+</script>
