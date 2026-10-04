@@ -627,7 +627,10 @@ toTop.addEventListener("click", () => {
 const setup = $("#setup");
 let draft = null;   // copie de travail : rien n'est appliqué avant « Appliquer »
 
-function openSetup(){
+/* Au premier passage on montre la fourche ; une fois configuré,
+   ⚙️ doit tomber directement sur les réglages, pas sur un écran
+   d'accueil qui ne s'adresse plus à personne. */
+function openSetup(startAt){
   draft = {
     title: SITE.title, city: SITE.city, subtitle: SITE.subtitle,
     rooms: ROOM_LIST.map(r => ({...r}))
@@ -636,12 +639,13 @@ function openSetup(){
   $("#fCity").value  = draft.city;
   $("#fSub").value   = draft.subtitle;
   drawRooms();
-  goStep(1);
+  goStep(startAt != null ? startAt : (IS_CONFIGURED ? 1 : 0));
   setup.hidden = false;
   setup.classList.remove("is-off");
   requestAnimationFrame(() => setup.classList.add("is-on"));
   document.body.style.overflow = "hidden";
-  $("#fTitle").focus({ preventScroll:true });
+  if (!setup.querySelector('.pane[data-pane="0"]').classList.contains("is-on"))
+    $("#fTitle").focus({ preventScroll:true });
 }
 function closeSetup(){
   setup.classList.remove("is-on");
@@ -660,10 +664,33 @@ addEventListener("keydown", e => { if (e.key === "Escape" && !setup.hidden) clos
 function goStep(n){
   $$(".step").forEach(b => b.classList.toggle("is-on", +b.dataset.step === n));
   $$(".pane").forEach(s => s.classList.toggle("is-on", +s.dataset.pane === n));
+  /* Sur la fourche, la barre d'étapes n'a pas de sens : rien n'est
+     encore commencé. Et le titre doit dire où l'on est. */
+  $("#setupSteps").hidden = (n === 0);
+  $("#setupTitle").textContent = n === 0 ? "Bienvenue" : "Configurer la page";
   if (n === 3) buildPrompt();
 }
 $("#setupSteps").addEventListener("click", e => {
   const b = e.target.closest("[data-step]"); if (b) goStep(+b.dataset.step);
+});
+
+/* ── Les trois routes de la fourche ───────────────────────────
+   Chacune mène au premier endroit réellement utile, pas à
+   l'étape 1 par convention. */
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-route]");
+  if (!r) return;
+  const route = r.dataset.route;
+  if (route === "new")     return goStep(1);
+  if (route === "restore") return goStep(4);
+  if (route === "import"){
+    /* On ouvre le sélecteur de fichier tout de suite : l'étape 3
+       contient aussi le prompt, qui n'intéresse pas quelqu'un qui
+       a déjà ses données. */
+    goStep(3);
+    $("#dsFile").value = "";
+    $("#dsFile").click();
+  }
 });
 ["fTitle","fCity","fSub"].forEach(id => $("#"+id).addEventListener("input", e => {
   draft[{fTitle:"title",fCity:"city",fSub:"subtitle"}[id]] = e.target.value;
@@ -838,6 +865,7 @@ $("#dsFile").addEventListener("change", () => {
     try { localStorage.setItem(DATA_KEY, JSON.stringify(d)); setFlag(true); if (typeof jgTouch === "function") jgTouch(); }
     catch(e){ return dsSay("Le navigateur refuse d'enregistrer ce jeu de données (trop volumineux ?).", true); }
     dsSay(`Données chargées : ${d.plants.length} plantes, ${d.seeds.length} graines. Rechargement…`);
+    try { sessionStorage.setItem("maxiskaJungle.justImported","1"); } catch(e){}
     setTimeout(() => location.reload(), 700);
   };
   r.readAsText(f);
@@ -893,25 +921,75 @@ $("#applySetup").addEventListener("click", () => {
    « Appliquer » et « Importer des données » lèvent le drapeau. */
 if (!IS_CONFIGURED) setTimeout(openSetup, REDUCED ? 0 : 620);
 
-/* ── Message ponctuel après « Appliquer » ────────────────────
-   C'est le moment où la confusion naît : la page a changé, le
-   fichier sur le disque non. On le dit tout de suite. */
+/* ── Message ponctuel après « Appliquer » ou un import ────────
+   Ce bandeau ne doit JAMAIS affirmer une sauvegarde qui n'a pas eu
+   lieu. Trois contextes, trois vérités différentes :
+     file://            le disque n'a pas bougé   → enregistrer un .html
+     http(s) sans synchro  rien n'est ailleurs    → activer la synchro
+     http(s) avec synchro  ça dépend du push      → on attend son issue
+   D'où le repeinturage piloté par jgSetState (part5) plutôt qu'un
+   texte figé écrit une fois pour toutes. */
+const JG_HOSTED = location.protocol === "https:" || location.protocol === "http:";
+let jgTipMode = null;
+
+function jgTipRepaint(){
+  if (!jgTipMode) return;
+  const tip = $("#applyTip");
+  if (!tip || tip.dataset.hushed === "1") return;
+  let configured = false, st = "local", detail = "";
+  try {
+    configured = (typeof jgConfigured === "function") && jgConfigured();
+    st = (typeof jgState === "string") ? jgState : "local";
+    detail = (typeof jgDetail === "string") ? jgDetail : "";
+  } catch(e){ /* part5 pas encore évalué */ }
+
+  const head = jgTipMode === "imported" ? "Données importées" : "Configuration appliquée";
+  let body, btns = "";
+
+  if (!JG_HOSTED){
+    body = `✓ ${head} <strong>sur ce navigateur</strong>. Le fichier sur ton disque, lui, n'a pas changé — pour l'emporter ailleurs ou l'envoyer à quelqu'un, enregistre un fichier .html.`;
+    btns = `<button type="button" data-setup-btn>Enregistrer un fichier</button>`;
+  } else if (!configured){
+    body = `⚠️ ${head} <strong>sur ce navigateur uniquement</strong>. Rien n'est sauvegardé ailleurs : si tu vides les données de ce navigateur, tout disparaît.`;
+    btns = `<button type="button" data-setup-btn data-sync-step>Activer la synchro</button>`;
+  } else if (st === "busy"){
+    body = `⟳ ${head}. Chiffrement et envoi vers GitHub…`;
+  } else if (st === "synced"){
+    body = `✓ ${head} et <strong>enregistrée sur GitHub</strong>, chiffrée.`;
+  } else if (st === "conflict"){
+    body = `⚠️ ${head} ici, mais la version en ligne a changé entre-temps. Rien n'est envoyé tant que tu n'as pas tranché.`;
+    btns = `<button type="button" data-setup-btn data-sync-step>Régler le conflit</button>`;
+  } else if (st === "error"){
+    body = `⚠️ ${head} ici, mais l'envoi vers GitHub a échoué${detail ? " — " + esc(detail) : ""}. Tes données ne sont que dans ce navigateur.`;
+    btns = `<button type="button" data-setup-btn data-sync-step>Vérifier la synchro</button>`;
+  } else {
+    body = `${head} ici. Envoi vers GitHub en attente…`;
+  }
+
+  tip.hidden = false;
+  tip.innerHTML = `<span>${body}</span>${btns}
+    <button type="button" id="tipClose" style="color:var(--text-faint)">Masquer</button>`;
+  $("#tipClose").addEventListener("click", () => {
+    tip.dataset.hushed = "1";
+    if (REDUCED) return tip.hidden = true;
+    tip.style.transition = "opacity 140ms var(--ease-out), transform 140ms var(--ease-out)";
+    tip.style.opacity = "0"; tip.style.transform = "scale(.98)";
+    setTimeout(() => tip.hidden = true, 140);
+  });
+}
+
 try {
   if (sessionStorage.getItem("maxiskaJungle.justApplied")){
     sessionStorage.removeItem("maxiskaJungle.justApplied");
-    const tip = $("#applyTip");
-    tip.hidden = false;
-    tip.innerHTML = `<span>✓ Configuration appliquée <strong>sur ce navigateur</strong>. Le fichier sur ton disque, lui, n'a pas changé — pour l'emporter ailleurs ou l'envoyer à quelqu'un, enregistre un fichier .html.</span>
-      <button type="button" data-setup-btn>Enregistrer un fichier</button>
-      <button type="button" id="tipClose" style="color:var(--text-faint)">Masquer</button>`;
-    $("#tipClose").addEventListener("click", () => {
-      if (REDUCED) return tip.hidden = true;
-      tip.style.transition = "opacity 140ms var(--ease-out), transform 140ms var(--ease-out)";
-      tip.style.opacity = "0"; tip.style.transform = "scale(.98)";
-      setTimeout(() => tip.hidden = true, 140);
-    });
+    jgTipMode = "applied";
+  } else if (sessionStorage.getItem("maxiskaJungle.justImported")){
+    sessionStorage.removeItem("maxiskaJungle.justImported");
+    jgTipMode = "imported";
   }
 } catch(e){ /* sessionStorage indisponible : simple confort perdu */ }
+/* Différé d'un tour de boucle : part5 (la synchro) est chargé après
+   ce fichier, donc jgConfigured() n'existe pas encore à cet instant. */
+if (jgTipMode) setTimeout(jgTipRepaint, 0);
 
 
 $("#stamp").textContent = new Date().toLocaleDateString("fr-FR");

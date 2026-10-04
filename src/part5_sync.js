@@ -146,6 +146,9 @@ function jgSetState(s, detail=""){
   if (box){ box.textContent = detail || label; box.classList.toggle("is-err", s === "error" || s === "conflict"); }
   const bar = document.getElementById("conflictBar");
   if (bar) bar.hidden = (s !== "conflict");
+  /* Le bandeau d'après-import suit l'état réel du push : sans ce
+     rappel, il affirmerait une sauvegarde encore en vol. */
+  if (typeof jgTipRepaint === "function") jgTipRepaint();
 }
 
 /* ── Pull ─────────────────────────────────────────────────────
@@ -168,7 +171,11 @@ async function jgPull({ silent=false, takeRemote=false } = {}){
     jgMeta = { sha:rem.sha, dirty:false, at:Date.now(), sig:jgSig(jgCollect()) };
     jgWrite(JG_META, jgMeta);
     jgSetState("synced", "Données récupérées depuis GitHub.");
-    if (!silent || true) location.reload();
+    /* On recharge toujours, y compris pour un pull silencieux : le
+       jeu de données vient de changer sous la page déjà peinte, et
+       seul un rechargement le reflète. « silent » ne concerne que
+       les messages, pas le rechargement. */
+    location.reload();
   } catch(e){ jgSetState("error", e.message || String(e)); }
 }
 
@@ -280,6 +287,14 @@ jgBindSettings();
 jgPaintSettings();
 if (jgConfigured()){
   jgSetState(jgMeta.dirty ? "dirty" : "synced");
-  jgPull({ silent:true });
+  /* Reprise d'un envoi perdu. Un import appelle jgTouch() — qui
+     programme le push à 1,8 s — puis recharge la page à 0,7 s : le
+     minuteur meurt avec la page. Au retour, jgMeta.dirty est encore
+     vrai mais jgPull sort sans rien envoyer si le distant n'a pas
+     bougé. Sans cette reprise, les données importées restaient
+     indéfiniment locales alors que la pastille disait « Modifié ». */
+  jgPull({ silent:true }).then(() => {
+    if (jgMeta.dirty && jgState !== "conflict" && jgState !== "error" && jgState !== "busy") jgPush();
+  });
 }
 </script>

@@ -163,6 +163,7 @@
     </header>
 
     <nav class="steps" id="setupSteps">
+      <button class="step step-back" type="button" data-step="0" aria-label="Revenir au choix de départ" title="Revenir au choix de départ">←</button>
       <button class="step is-on" type="button" data-step="1"><b>1</b> Identité</button>
       <button class="step" type="button" data-step="2"><b>2</b> Pièces</button>
       <button class="step" type="button" data-step="3"><b>3</b> Générer</button>
@@ -170,7 +171,32 @@
     </nav>
 
     <div class="modal-body">
-      <section class="pane is-on" data-pane="1">
+      <!-- Pane 0 — la fourche d'entrée. Trois intentions distinctes :
+           arriver de zéro, arriver avec un fichier, arriver avec une
+           synchro existante. Sans elle, un nouveau navigateur doit
+           traverser « Identité » et « Pièces » pour rien. -->
+      <section class="pane is-on" data-pane="0">
+        <div class="routes">
+          <button class="route" type="button" data-route="new">
+            <span class="route-emo" aria-hidden="true">🌱</span>
+            <span class="route-txt"><strong>Nouvelle installation</strong>
+              <em>Je pars de zéro : nom, ville, pièces, puis un prompt à donner à une IA pour générer mes plantes.</em></span>
+          </button>
+          <button class="route" type="button" data-route="import">
+            <span class="route-emo" aria-hidden="true">📂</span>
+            <span class="route-txt"><strong>J'ai déjà mes données</strong>
+              <em>Charger un fichier <code>.json</code> exporté d'une autre version de l'appli.</em></span>
+          </button>
+          <button class="route" type="button" data-route="restore">
+            <span class="route-emo" aria-hidden="true">☁️</span>
+            <span class="route-txt"><strong>Retrouver ma synchro</strong>
+              <em>J'ai déjà un dépôt chiffré : jeton et phrase secrète, et tout redescend.</em></span>
+          </button>
+        </div>
+        <p class="hint">Tu peux aussi fermer cette fenêtre pour parcourir le jeu d'exemple. Elle se rouvrira à la prochaine ouverture tant que rien n'a été appliqué ni importé.</p>
+      </section>
+
+      <section class="pane" data-pane="1">
         <label class="fld"><span>Nom de la page</span>
           <input class="input" id="fTitle" type="text" placeholder="Your Tiny Jungle" maxlength="40"></label>
         <label class="fld"><span>Ville</span>
