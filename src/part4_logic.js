@@ -640,6 +640,7 @@ function openSetup(startAt){
   $("#fSub").value   = draft.subtitle;
   drawRooms();
   goStep(startAt != null ? startAt : (IS_CONFIGURED ? 1 : 0));
+  jgFootRepaint();
   setup.hidden = false;
   setup.classList.remove("is-off");
   requestAnimationFrame(() => setup.classList.add("is-on"));
@@ -647,6 +648,26 @@ function openSetup(startAt){
   if (!setup.querySelector('.pane[data-pane="0"]').classList.contains("is-on"))
     $("#fTitle").focus({ preventScroll:true });
 }
+/* ── Pied de la fenêtre de réglages ─────────────────────────
+   GitHub est la méthode normale ; le fichier .html est un plan B,
+   replié. Le texte et le bouton suivent l'état réel de la synchro. */
+function jgFootRepaint(){
+  const why = document.getElementById("footWhy"), apply = document.getElementById("applySetup");
+  if (!why || !apply) return;
+  let configured = false;
+  try { configured = (typeof jgConfigured === "function") && jgConfigured(); } catch(e){}
+  if (configured){
+    why.innerHTML = `<strong>Appliquer</strong> enregistre sur cet appareil, puis envoie le tout, chiffré, sur GitHub.`;
+    apply.textContent = "✓ Appliquer et synchroniser";
+  } else {
+    why.innerHTML = `<strong>Appliquer</strong> ne change que cette page, sur ce navigateur. <button type="button" class="linkbtn" id="footGoSync">Activer la synchro GitHub</button> pour retrouver tes données partout.`;
+    apply.textContent = "✓ Appliquer sur ce navigateur";
+  }
+}
+document.addEventListener("click", e => {
+  if (e.target.closest("#footGoSync")) goStep(4);
+});
+
 function closeSetup(){
   setup.classList.remove("is-on");
   setup.classList.add("is-off");

@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#18210f" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Jungle">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=1">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=1">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg?v=1">
 <style>
@@ -883,7 +883,16 @@ footer a{color:var(--text-dim);text-decoration:underline;text-underline-offset:2
 @keyframes pulse{50%{opacity:.25}}
 .sync-pill.is-conflict,.sync-pill.is-error{color:#fff;background:#b3421f;border-color:transparent}
 [data-theme="dark"] .sync-pill.is-conflict,[data-theme="dark"] .sync-pill.is-error{background:#d25830}
-@media (max-width:560px){ .sync-pill{font-size:0;padding:5px;gap:0} .sync-pill::before{width:9px;height:9px} }
+/* Sur mobile, la pastille de la barre collante mangeait la place du
+   titre : elle disparaît, l'état reste lisible en haut de page. */
+@media (max-width:560px){ .topbar .sync-pill{display:none} }
+.top-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 12px;padding-top:14px}
+.top-row-btns{display:flex;gap:8px;margin-left:auto}
+#syncLine{font-size:12px;white-space:normal;text-align:left}
+.foot-alt summary{font-size:12px;color:var(--text-faint);cursor:pointer;padding:2px 0}
+.foot-alt[open] summary{margin-bottom:6px}
+.foot-alt .foot-hint{margin-bottom:8px}
+.linkbtn{font:inherit;font-size:inherit;font-weight:600;background:none;border:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px;padding:0}
 
 .guide{margin:0 0 16px;padding-left:20px;font-size:12.5px;color:var(--text-dim);line-height:1.6}
 .guide li{margin-bottom:7px}
@@ -962,9 +971,12 @@ footer a{color:var(--text-dim);text-decoration:underline;text-underline-offset:2
     </span>
   </div>
 
-  <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px">
-    <button class="btn" type="button" data-setup-btn title="Configurer cette page">⚙️ Configurer</button>
-    <button class="btn" type="button" data-theme-btn data-theme-long aria-live="polite">🌙 Mode sombre</button>
+  <div class="top-row">
+    <button class="sync-pill" id="syncLine" type="button" data-setup-btn data-sync-step title="Synchronisation" aria-live="polite" hidden></button>
+    <div class="top-row-btns">
+      <button class="btn" type="button" data-setup-btn title="Configurer cette page">⚙️ Configurer</button>
+      <button class="btn" type="button" data-theme-btn data-theme-long aria-live="polite">🌙 Mode sombre</button>
+    </div>
   </div>
 
   <!-- ════════ HERO ════════ -->
@@ -1187,15 +1199,14 @@ footer a{color:var(--text-dim);text-decoration:underline;text-underline-offset:2
     </div>
 
     <footer class="modal-foot">
-      <p class="foot-hint">
-        <strong>Appliquer</strong> ne change que cette page, sur ce navigateur.
-        <strong>Enregistrer</strong> fabrique un fichier <code>.html</code> à emporter, données comprises —
-        une page web n'a pas le droit de réécrire son propre fichier, c'est le seul moyen.
-        <span id="setupCount"></span>
-      </p>
+      <p class="foot-hint"><span id="footWhy"></span><span id="setupCount"></span></p>
+      <details class="foot-alt" id="footAlt">
+        <summary>Plan B, sans GitHub : enregistrer un fichier .html</summary>
+        <p class="foot-hint">Fabrique un fichier <code>.html</code> à emporter, données comprises — une page web n'a pas le droit de réécrire son propre fichier, c'est le seul moyen.</p>
+        <button class="btn" type="button" id="pageDl">💾 Enregistrer un fichier .html</button>
+      </details>
       <div class="foot-btns">
         <button class="btn" type="button" data-setup-close>Fermer</button>
-        <button class="btn" type="button" id="pageDl">💾 Enregistrer un fichier .html</button>
         <button class="btn is-on" type="button" id="applySetup">✓ Appliquer sur ce navigateur</button>
       </div>
     </footer>
@@ -2672,6 +2683,7 @@ function openSetup(startAt){
   $("#fSub").value   = draft.subtitle;
   drawRooms();
   goStep(startAt != null ? startAt : (IS_CONFIGURED ? 1 : 0));
+  jgFootRepaint();
   setup.hidden = false;
   setup.classList.remove("is-off");
   requestAnimationFrame(() => setup.classList.add("is-on"));
@@ -2679,6 +2691,26 @@ function openSetup(startAt){
   if (!setup.querySelector('.pane[data-pane="0"]').classList.contains("is-on"))
     $("#fTitle").focus({ preventScroll:true });
 }
+/* ── Pied de la fenêtre de réglages ─────────────────────────
+   GitHub est la méthode normale ; le fichier .html est un plan B,
+   replié. Le texte et le bouton suivent l'état réel de la synchro. */
+function jgFootRepaint(){
+  const why = document.getElementById("footWhy"), apply = document.getElementById("applySetup");
+  if (!why || !apply) return;
+  let configured = false;
+  try { configured = (typeof jgConfigured === "function") && jgConfigured(); } catch(e){}
+  if (configured){
+    why.innerHTML = `<strong>Appliquer</strong> enregistre sur cet appareil, puis envoie le tout, chiffré, sur GitHub.`;
+    apply.textContent = "✓ Appliquer et synchroniser";
+  } else {
+    why.innerHTML = `<strong>Appliquer</strong> ne change que cette page, sur ce navigateur. <button type="button" class="linkbtn" id="footGoSync">Activer la synchro GitHub</button> pour retrouver tes données partout.`;
+    apply.textContent = "✓ Appliquer sur ce navigateur";
+  }
+}
+document.addEventListener("click", e => {
+  if (e.target.closest("#footGoSync")) goStep(4);
+});
+
 function closeSetup(){
   setup.classList.remove("is-on");
   setup.classList.add("is-off");
@@ -3155,10 +3187,21 @@ async function jgPutRemote(envelope, sha){
 /* ── États ────────────────────────────────────────────────────
    Local · Synchronisé · Modifié · Synchro… · Conflit · Erreur */
 let jgState = "local", jgDetail = "";
+/* « aujourd'hui 14:32 », « hier 09:05 », sinon « 03/10 18:20 ». */
+function jgFmtAt(ms){
+  if (!ms) return "";
+  const d = new Date(ms), n = new Date();
+  const hm = d.toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" });
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(n) - day(d)) / 86400000);
+  if (diff === 0) return "aujourd'hui " + hm;
+  if (diff === 1) return "hier " + hm;
+  return d.toLocaleDateString("fr-FR", { day:"2-digit", month:"2-digit" }) + " " + hm;
+}
 function jgSetState(s, detail=""){
   jgState = s; jgDetail = detail;
   const pill = document.getElementById("syncPill");
-  if (!pill) return;
+  const line = document.getElementById("syncLine");
   const map = {
     local:   ["Local",        "is-local"],
     synced:  ["Synchronisé",  "is-ok"],
@@ -3168,10 +3211,22 @@ function jgSetState(s, detail=""){
     error:   ["Erreur",       "is-error"]
   };
   const [label, cls] = map[s] || map.local;
-  pill.className = "sync-pill " + cls;
-  pill.textContent = label;
-  pill.title = detail || label;
-  pill.hidden = (s === "local" && !jgConfigured());
+  const hide = (s === "local" && !jgConfigured());
+  const when = jgFmtAt(jgMeta && jgMeta.at);
+  /* Le texte long (avec la date) va en haut de page ; la barre
+     collante garde le mot seul. */
+  const longLabel = s === "synced"   ? "Synchronisé" + (when ? " · " + when : "")
+                  : s === "dirty"    ? "Modifié · envoi en attente"
+                  : s === "conflict" ? "Conflit de synchro · à régler"
+                  : s === "error"    ? "Erreur de synchro · à vérifier"
+                  : label;
+  [[pill, label], [line, longLabel]].forEach(([el, txt]) => {
+    if (!el) return;
+    el.className = "sync-pill " + cls;
+    el.textContent = txt;
+    el.title = detail || longLabel;
+    el.hidden = hide;
+  });
   const box = document.getElementById("syncStatus");
   if (box){ box.textContent = detail || label; box.classList.toggle("is-err", s === "error" || s === "conflict"); }
   const bar = document.getElementById("conflictBar");
@@ -3179,6 +3234,7 @@ function jgSetState(s, detail=""){
   /* Le bandeau d'après-import suit l'état réel du push : sans ce
      rappel, il affirmerait une sauvegarde encore en vol. */
   if (typeof jgTipRepaint === "function") jgTipRepaint();
+  if (typeof jgFootRepaint === "function") jgFootRepaint();
 }
 
 /* ── Pull ─────────────────────────────────────────────────────
@@ -3192,7 +3248,11 @@ async function jgPull({ silent=false, takeRemote=false } = {}){
   try {
     const rem = await jgFetchRemote();
     if (rem.missing){ jgSetState(jgMeta.dirty ? "dirty" : "synced", "Aucune donnée en ligne pour l'instant."); return; }
-    if (rem.sha === jgMeta.sha && !takeRemote){ jgSetState(jgMeta.dirty ? "dirty" : "synced"); return; }
+    if (rem.sha === jgMeta.sha && !takeRemote){
+      /* Rien n'a bougé en ligne : on retient l'heure de cette vérification. */
+      if (!jgMeta.dirty){ jgMeta.at = Date.now(); jgWrite(JG_META, jgMeta); }
+      jgSetState(jgMeta.dirty ? "dirty" : "synced"); return;
+    }
     if (jgMeta.dirty && !takeRemote){ jgSetState("conflict", "La version en ligne a changé, et tu as des modifications locales non envoyées."); return; }
     let clear;
     try { clear = await jgDecrypt(rem.envelope, jgCfg.pass); }
@@ -3520,11 +3580,45 @@ jgCheckHash();
    une version plus récente est en ligne, et se recharger.
    ════════════════════════════════════════════════════════════════ */
 "use strict";
-const APP_BUILD = "20261004-2029";
+const APP_BUILD = "20261005-1052";
 
 /* En local (file://) il n'y a ni service worker ni manifeste : on
    n'essaie même pas, ça ne ferait qu'une erreur de console. */
 const JG_ONLINE_APP = location.protocol === "https:" || location.protocol === "http:";
+
+/* ── Nom du raccourci = nom personnalisé de l'appli ───────────
+   Le manifeste statique porte « Your Tiny Jungle ». On le remplace
+   par un manifeste produit à la volée avec le titre réglé par
+   l'utilisateur. Les adresses doivent être absolues : un blob: n'a
+   pas de dossier de base pour résoudre les chemins relatifs. */
+function jgDynamicManifest(){
+  try {
+    const title = (typeof SITE !== "undefined" && SITE.title ? String(SITE.title) : "").trim();
+    if (!title) return;
+    const base = new URL("./", location.href).href;
+    const abs = p => new URL(p, base).href;
+    const m = {
+      id: base, name: title, short_name: title,
+      description: "Plantes d'intérieur et calendrier de semis",
+      start_url: base, scope: base, display: "standalone",
+      orientation: "portrait-primary", lang: "fr",
+      background_color: "#f5ead8", theme_color: "#f5ead8",
+      icons: [
+        { src: abs("icons/icon-192.png?v=2"), sizes: "192x192", type: "image/png", purpose: "any" },
+        { src: abs("icons/icon-512.png?v=2"), sizes: "512x512", type: "image/png", purpose: "any" },
+        { src: abs("icons/maskable-192.png?v=2"), sizes: "192x192", type: "image/png", purpose: "maskable" },
+        { src: abs("icons/maskable-512.png?v=2"), sizes: "512x512", type: "image/png", purpose: "maskable" }
+      ]
+    };
+    const url = URL.createObjectURL(new Blob([JSON.stringify(m)], { type:"application/manifest+json" }));
+    const link = document.querySelector('link[rel="manifest"]');
+    if (link) link.setAttribute("href", url);
+    /* iOS lit le titre de la page et cette balise pour nommer le raccourci. */
+    const ios = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (ios) ios.setAttribute("content", title);
+  } catch(e){ /* le manifeste statique reste en place */ }
+}
+if (JG_ONLINE_APP) jgDynamicManifest();
 
 if (JG_ONLINE_APP && "serviceWorker" in navigator){
   addEventListener("load", () => {

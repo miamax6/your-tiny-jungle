@@ -33,9 +33,12 @@
     </span>
   </div>
 
-  <div style="display:flex;justify-content:flex-end;gap:8px;padding-top:14px">
-    <button class="btn" type="button" data-setup-btn title="Configurer cette page">⚙️ Configurer</button>
-    <button class="btn" type="button" data-theme-btn data-theme-long aria-live="polite">🌙 Mode sombre</button>
+  <div class="top-row">
+    <button class="sync-pill" id="syncLine" type="button" data-setup-btn data-sync-step title="Synchronisation" aria-live="polite" hidden></button>
+    <div class="top-row-btns">
+      <button class="btn" type="button" data-setup-btn title="Configurer cette page">⚙️ Configurer</button>
+      <button class="btn" type="button" data-theme-btn data-theme-long aria-live="polite">🌙 Mode sombre</button>
+    </div>
   </div>
 
   <!-- ════════ HERO ════════ -->
@@ -258,15 +261,14 @@
     </div>
 
     <footer class="modal-foot">
-      <p class="foot-hint">
-        <strong>Appliquer</strong> ne change que cette page, sur ce navigateur.
-        <strong>Enregistrer</strong> fabrique un fichier <code>.html</code> à emporter, données comprises —
-        une page web n'a pas le droit de réécrire son propre fichier, c'est le seul moyen.
-        <span id="setupCount"></span>
-      </p>
+      <p class="foot-hint"><span id="footWhy"></span><span id="setupCount"></span></p>
+      <details class="foot-alt" id="footAlt">
+        <summary>Plan B, sans GitHub : enregistrer un fichier .html</summary>
+        <p class="foot-hint">Fabrique un fichier <code>.html</code> à emporter, données comprises — une page web n'a pas le droit de réécrire son propre fichier, c'est le seul moyen.</p>
+        <button class="btn" type="button" id="pageDl">💾 Enregistrer un fichier .html</button>
+      </details>
       <div class="foot-btns">
         <button class="btn" type="button" data-setup-close>Fermer</button>
-        <button class="btn" type="button" id="pageDl">💾 Enregistrer un fichier .html</button>
         <button class="btn is-on" type="button" id="applySetup">✓ Appliquer sur ce navigateur</button>
       </div>
     </footer>

@@ -125,10 +125,21 @@ async function jgPutRemote(envelope, sha){
 /* ── États ────────────────────────────────────────────────────
    Local · Synchronisé · Modifié · Synchro… · Conflit · Erreur */
 let jgState = "local", jgDetail = "";
+/* « aujourd'hui 14:32 », « hier 09:05 », sinon « 03/10 18:20 ». */
+function jgFmtAt(ms){
+  if (!ms) return "";
+  const d = new Date(ms), n = new Date();
+  const hm = d.toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" });
+  const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(n) - day(d)) / 86400000);
+  if (diff === 0) return "aujourd'hui " + hm;
+  if (diff === 1) return "hier " + hm;
+  return d.toLocaleDateString("fr-FR", { day:"2-digit", month:"2-digit" }) + " " + hm;
+}
 function jgSetState(s, detail=""){
   jgState = s; jgDetail = detail;
   const pill = document.getElementById("syncPill");
-  if (!pill) return;
+  const line = document.getElementById("syncLine");
   const map = {
     local:   ["Local",        "is-local"],
     synced:  ["Synchronisé",  "is-ok"],
@@ -138,10 +149,22 @@ function jgSetState(s, detail=""){
     error:   ["Erreur",       "is-error"]
   };
   const [label, cls] = map[s] || map.local;
-  pill.className = "sync-pill " + cls;
-  pill.textContent = label;
-  pill.title = detail || label;
-  pill.hidden = (s === "local" && !jgConfigured());
+  const hide = (s === "local" && !jgConfigured());
+  const when = jgFmtAt(jgMeta && jgMeta.at);
+  /* Le texte long (avec la date) va en haut de page ; la barre
+     collante garde le mot seul. */
+  const longLabel = s === "synced"   ? "Synchronisé" + (when ? " · " + when : "")
+                  : s === "dirty"    ? "Modifié · envoi en attente"
+                  : s === "conflict" ? "Conflit de synchro · à régler"
+                  : s === "error"    ? "Erreur de synchro · à vérifier"
+                  : label;
+  [[pill, label], [line, longLabel]].forEach(([el, txt]) => {
+    if (!el) return;
+    el.className = "sync-pill " + cls;
+    el.textContent = txt;
+    el.title = detail || longLabel;
+    el.hidden = hide;
+  });
   const box = document.getElementById("syncStatus");
   if (box){ box.textContent = detail || label; box.classList.toggle("is-err", s === "error" || s === "conflict"); }
   const bar = document.getElementById("conflictBar");
@@ -149,6 +172,7 @@ function jgSetState(s, detail=""){
   /* Le bandeau d'après-import suit l'état réel du push : sans ce
      rappel, il affirmerait une sauvegarde encore en vol. */
   if (typeof jgTipRepaint === "function") jgTipRepaint();
+  if (typeof jgFootRepaint === "function") jgFootRepaint();
 }
 
 /* ── Pull ─────────────────────────────────────────────────────
@@ -162,7 +186,11 @@ async function jgPull({ silent=false, takeRemote=false } = {}){
   try {
     const rem = await jgFetchRemote();
     if (rem.missing){ jgSetState(jgMeta.dirty ? "dirty" : "synced", "Aucune donnée en ligne pour l'instant."); return; }
-    if (rem.sha === jgMeta.sha && !takeRemote){ jgSetState(jgMeta.dirty ? "dirty" : "synced"); return; }
+    if (rem.sha === jgMeta.sha && !takeRemote){
+      /* Rien n'a bougé en ligne : on retient l'heure de cette vérification. */
+      if (!jgMeta.dirty){ jgMeta.at = Date.now(); jgWrite(JG_META, jgMeta); }
+      jgSetState(jgMeta.dirty ? "dirty" : "synced"); return;
+    }
     if (jgMeta.dirty && !takeRemote){ jgSetState("conflict", "La version en ligne a changé, et tu as des modifications locales non envoyées."); return; }
     let clear;
     try { clear = await jgDecrypt(rem.envelope, jgCfg.pass); }
