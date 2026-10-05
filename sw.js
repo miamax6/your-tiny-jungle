@@ -3,7 +3,7 @@
    un service worker « cache d'abord » y figerait une version
    périmée pour des jours. D'où le réseau d'abord, systématiquement
    revalidé, et un cache qui ne sert qu'hors ligne. */
-const CACHE = "ytj-v2";
+const CACHE = "ytj-v3";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest",
                 "./icons/icon-192.png", "./icons/icon-512.png",
                 "./icons/maskable-192.png", "./icons/maskable-512.png"];

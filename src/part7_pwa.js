@@ -30,10 +30,10 @@ function jgDynamicManifest(){
       orientation: "portrait-primary", lang: "fr",
       background_color: "#f5ead8", theme_color: "#f5ead8",
       icons: [
-        { src: abs("icons/icon-192.png?v=2"), sizes: "192x192", type: "image/png", purpose: "any" },
-        { src: abs("icons/icon-512.png?v=2"), sizes: "512x512", type: "image/png", purpose: "any" },
-        { src: abs("icons/maskable-192.png?v=2"), sizes: "192x192", type: "image/png", purpose: "maskable" },
-        { src: abs("icons/maskable-512.png?v=2"), sizes: "512x512", type: "image/png", purpose: "maskable" }
+        { src: abs("icons/icon-192.png?v=3"), sizes: "192x192", type: "image/png", purpose: "any" },
+        { src: abs("icons/icon-512.png?v=3"), sizes: "512x512", type: "image/png", purpose: "any" },
+        { src: abs("icons/maskable-192.png?v=3"), sizes: "192x192", type: "image/png", purpose: "maskable" },
+        { src: abs("icons/maskable-512.png?v=3"), sizes: "512x512", type: "image/png", purpose: "maskable" }
       ]
     };
     const url = URL.createObjectURL(new Blob([JSON.stringify(m)], { type:"application/manifest+json" }));
